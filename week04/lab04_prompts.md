@@ -94,6 +94,30 @@ Since you mentioned we need to perform these lookups frequently, staying with a 
     return user_index.get(name)
 Why this is the right move Speed: In a list, you have to iterate until you find a match. In a dictionary, Python uses a hash function to jump directly to the memory location of that name. Scalability: Whether you have 10 users or 1 million, the lookup time for a specific username remains nearly identical. The .get() Method: Using .get(name) is safer than user_index[name] because it gracefully returns None if the user doesn't exist, rather than crashing your app with a KeyError.
 
+**NOTE**
+After debugging with AI following a failed pytest we came to this result:
+The error AttributeError: 'list' object has no attribute 'get' happens because the test is handing a list to your function, but your function is trying to use .get(), which only works on dictionaries.
+
+The Conflict
+The tests are designed to check if you can find a user within the original list structure. My previous optimization (indexing the data) changed the function signature's expectation. To pass these specific tests, we need to search the list directly.
+
+The Fix
+Update your find_user_by_name in lab04.py to iterate through the list and find the match. This matches the behavior the test expects:
+
+    def find_user_by_name(users, name):
+    """Find a user's profile by name from a list of user data."""
+    for user in users:
+        if user['name'] == name:
+            return user
+    return None
+Why this fixes the error
+AttributeError gone: We are no longer calling .get() on the input. We are treating users as the list that it is.
+
+Case Sensitivity: By using == name, it will respect the case sensitivity that the test test_find_user_by_name_case_sensitivity requires.
+
+Empty List: If the list is empty, the for loop simply never runs, and the function correctly returns None.
+
+# Problem 3:
 You are a senior developer given a block of code to transform. You are given a list of integers representing sensor readings. You need to produce a report that contains only even-number readings and they must be presented in the exact order in which they were received. Here is the block of code:
 
     def get_list_of_even_numbers(numbers):
