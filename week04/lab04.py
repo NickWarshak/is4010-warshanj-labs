@@ -11,13 +11,12 @@ def build_user_index(users):
     """
     return {user['name']: user for user in users}
 
-def find_user_by_name(user_index, name):
-    """
-    Finds a user's profile in the index.
-    
-    Returns the dict if found, otherwise None.
-    """
-    return user_index.get(name)
+def find_user_by_name(users, name):
+    """Find a user's profile by name from a list of user data."""
+    for user in users:
+        if user['name'] == name:
+            return user
+    return None
 
 def get_list_of_even_numbers(numbers):
     """Filters for even numbers while maintaining original sensor sequence."""
